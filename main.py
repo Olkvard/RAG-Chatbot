@@ -18,9 +18,8 @@ from database import generate_data_store
 
 callback_manager = CallbackManager([StreamingStdOutCallbackHandler()])
 
-REPORTS_DB = "DB"
-DESIGN_DB = "DesignDB"
-SPECS_DB = "specsDB"
+DATA_DB = "dataDB"
+DATA2_DB = "data2DB"
 SOURCES = ""
 EMBEDDING = OllamaEmbeddings(model = "nomic-embed-text")
 LLM = Ollama(model = "mistral:instruct", temperature = 0.5, callbacks=callback_manager)
@@ -71,7 +70,7 @@ If it refers to a specific report make sure to include the date of that report. 
 History: '''${history}''' \
 Question: '''${question}'''"""
 
-class Reports(BaseModel):
+class DateFilter (BaseModel):
     """Esta clase se utiliza para detectar los parámetros de búsqueda dentro de los metadatos de los reportes."""
     ModDate: Optional[datetime.date] = Field(
         None,
@@ -87,7 +86,7 @@ class Reports(BaseModel):
 
 class Route(BaseModel):
     """En esta clase se definen las diferentes bases de datos a las que tiene acceso el LLM para su direccionamiento"""
-    datasource: Literal["Monthly Reports", "Design and test plan", "Requisites of the project"]= Field(
+    datasource: Literal["Quantum Phisics", "Tema 2"]= Field(
         ...,
         description="Given a user question choose wich datasource would be most relevant for answering their question, you must choose one"
     )
@@ -265,9 +264,8 @@ def get_llm_response(query, history):
     Raises: 
         Exception: Si hay cualquier problema al obtener la respuesta"""
 
-    Reports_DB = Chroma(persist_directory=REPORTS_DB, embedding_function=EMBEDDING)
-    Design_DB = Chroma(persist_directory=DESIGN_DB, embedding_function=EMBEDDING)
-    Specs_DB = Chroma(persist_directory=SPECS_DB, embedding_function=EMBEDDING)
+    phisics_DB = Chroma(persist_directory=DATA_DB, embedding_function=EMBEDDING)
+    data2_DB = Chroma(persist_directory=DATA2_DB, embedding_function=EMBEDDING)
 
     #Esto junta el historial del chat y lo transforma en un string. Se usa para darle al chatbot memoria a corto plazo, por el tamaño del modelo se ha ajustado a máximo 10 preguntas
     historia = []
@@ -288,15 +286,12 @@ def get_llm_response(query, history):
     try:
         # Determina la base de datos y el flujo a seguir dependiendo de la pregunta
         most_similar= query_router(contextualized_query)
-        if "Monthly Reports" in most_similar.datasource:
-            filter = json.loads(query_construction(contextualized_query, Reports))
-            results = Reports_DB.similarity_search_with_score(contextualized_query, k=7, filter=filter)
+        if "Quantum Phisics" in most_similar.datasource:
+            results = phisics_DB.similarity_search_with_score(contextualized_query, k=7, filter=filter)
             context_text = "\n\n---\n\n".join([doc[0].page_content for doc in results])
-        elif "Design and test plan" in most_similar.datasource:
-            results = Design_DB.similarity_search_with_score(contextualized_query, k=7)
-            context_text = "\n\n---\n\n".join([doc[0].page_content for doc in results])
-        elif "Requisites of the project" in most_similar.datasource:
-            results = Specs_DB.similarity_search_with_score(contextualized_query, k=7)
+        elif "Tema 2" in most_similar.datasource:
+            filter = json.loads(query_construction(contextualized_query, DateFilter))
+            results = Data2_DB.similarity_search_with_score(contextualized_query, k=7)
             context_text = "\n\n---\n\n".join([doc[0].page_content for doc in results])
 
         chain = create_chain()
@@ -331,23 +326,17 @@ def vote(data: gr.LikeData, history):
     if data.liked:
         most_similar = query_router(data.value)
 
-        if "Monthly Reports" in most_similar.datasource:
+        if "Quantum Phisics" in most_similar.datasource:
             with open("data/RespuestasCorrectas.txt", 'a') as archivo:
                 archivo.write(data.value + '\n\n')
 
-            generate_data_store(chunk_size=1000, data_path="data", chroma_path=REPORTS_DB)
+            generate_data_store(chunk_size=1000, data_path="data", chroma_path=DATA_DB)
             
-        elif "Design and test plan" in most_similar.datasource:
-            with open("DesignData/RespuestasCorrectas.txt", 'a') as archivo:
+        elif "Tema 2" in most_similar.datasource:
+            with open("data2/RespuestasCorrectas.txt", 'a') as archivo:
                 archivo.write(data.value + '\n\n')
             
-            generate_data_store(chunk_size=1000, data_path="DesignData", chroma_path=DESIGN_DB)
-
-        elif "Requisites of the project" in most_similar.datasource:
-            with open("specificationData/RespuestasCorrectas.txt", 'a') as archivo:
-                archivo.write(data.value + '\n\n')
-
-            generate_data_store(chunk_size=1000, data_path="specificationData", chroma_path=SPECS_DB)
+            generate_data_store(chunk_size=1000, data_path="data2", chroma_path=DATA2_DB)
 
         mesage = "La respuesta se ha añadido a la base de datos: "+ most_similar.datasource
 
