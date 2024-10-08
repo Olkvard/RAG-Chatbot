@@ -362,7 +362,7 @@ def main():
     """Crea una interfaz de usuario para permitir el uso de la aplicación como un chatbot conversacional"""
 
     with gr.Blocks() as demo:
-        gr.Markdown("""<center><font size=7><b>SCRIPT</b></font></center>""")
+        gr.Markdown("""<center><font size=7><b>RAG Chatbot</b></font></center>""")
 
         # Componentes del chatbot
         chatbot = gr.Chatbot(label='Mistral:Instruct', height=560)
