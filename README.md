@@ -68,18 +68,55 @@ Asegúrate de tener instalados los siguientes elementos en tu sistema:
 
 7. Ajustar el código del main.py:                                                  
    Tras la creación de las bases de datos se deben actualizar los accesos que realiza el LLM. Para ello el primer paso es modificar las variables globales que indican la dirección de las bases de datos. 
-
-    Interfaz de usuario gráfica, Texto
-
-    Descripción generada automáticamente 
-
-
-    En estas líneas se debe crear una variable global por cada base de datos creada y asignarle la ruta de dicha base de datos, lo recomendable es seleccionar cada una de estas y hacer click derecho, luego seleccionar la opción de cambiar todas las ocurrencias de esta forma te aseguras de que no haya problemas más adelante. Tal y como se muestra en la Figura 3. 
     ```bash
-    python main.py
+   DATA_DB = "dataDB"
+   DATA2_DB = "data2DB"
+   ```
+    En estas líneas se debe crear una variable global por cada base de datos creada y asignarle la ruta de dicha base de datos. Tras este proceso debemos ir a la clase `Route` aqui debemos cambiar las opciones dentro de los corchetes de `Literal`, y poner el tema de cada uno da nuestras bases de datos. Se obtienen mejores resultados si los nombres están en inglés.
+   ```bash
+   class Route(BaseModel):
+    """En esta clase se definen las diferentes bases de datos a las que tiene acceso el LLM para su direccionamiento"""
+    datasource: Literal["Quantum Phisics", "Tema 2"]= Field(
+        ...,
+        description="Given a user question choose wich datasource would be most relevant for answering their question, you must choose one"
+    )
+   ```
+   Ahora bajamos a la función `get_llm_response` y aquí debemos modificar varias cosas, primero debemos crear las variables que se encarguen de extraer los documentos, tan solo hay que cambiar dos nombres.
+   ```bash
+   Phisics_DB = Chroma(persist_directory=DATA_DB, embedding_function=EMBEDDING)
+   Data2_DB = Chroma(persist_directory=DATA2_DB, embedding_function=EMBEDDING)
+   ```
+    Una vez cambiado eso debemos cambiar la selección de base de datos a buscar.
+   ```bash
+   if "Quantum Phisics" in most_similar.datasource:
+       results = phisics_DB.similarity_search_with_score(contextualized_query, k=7, filter=filter)
+       context_text = "\n\n---\n\n".join([doc[0].page_content for doc in results])
+   elif "Tema 2" in most_similar.datasource:
+       filter = json.loads(query_construction(contextualized_query, DateFilter))
+       results = Data2_DB.similarity_search_with_score(contextualized_query, k=7)
+       context_text = "\n\n---\n\n".join([doc[0].page_content for doc in results])
+   ```
+   En este caso hay dos tipos de bases de datos, las que necesitan filtrado por fecha o no, por ejemplo si tienes una base de datos que almacena los reportes mensuales sobre un proyecto y quieres buscar una reunión en concreto, entonces en esa base de datos será necesaria la linea de filtro, a parte de eso tan solo tienes que asegurarte que los nombres entre " " coincidan con los nombres de la clase `Route` y que se acceda a la variable correcta.
+   Por último para asegurarnos que la función de validación de respuestas funciona como es debido debemos cambiar los nombres en la función `vote`
+    ```bash
+    if "Quantum Phisics" in most_similar.datasource:
+        with open("data/RespuestasCorrectas.txt", 'a') as archivo:
+            archivo.write(data.value + '\n\n')
+
+        generate_data_store(chunk_size=1000, data_path="data", chroma_path=DATA_DB)
+            
+    elif "Tema 2" in most_similar.datasource:
+        with open("data2/RespuestasCorrectas.txt", 'a') as archivo:
+            archivo.write(data.value + '\n\n')
+            
+        generate_data_store(chunk_size=1000, data_path="data2", chroma_path=DATA2_DB)
     ```
+    En estas líneas hay que cambiar los nombres entre " " para que se ajusten a los que hemos puesto anteriormente. Y tras todas estas modificaciones ya podemos ejecutar el programa.
+   ```bash
+   python main.py
+   ```
     
-8. Acceder a la interfaz Gradio:              
+9. Acceder a la interfaz Gradio:              
    El sistema se iniciará localmente y podrás acceder a la interfaz Gradio en tu navegador en `http://localhost:7860/`.
 
 ## Uso
@@ -90,10 +127,10 @@ Una vez que el sistema esté funcionando, puedes:
 
 ## Estructura del Proyecto
 ```bash
-├── main.py                   # Punto de entrada principal de la aplicación
 ├── data/                     # Directorio para almacenar los documentos subidos
-├── dataDB/                   # Directorio para almacenar los embeddings en Chroma
 ├── README.md                 # Introducción al proyecto
+├── database.py               # Creación de las bases de datos
+├── main.py                   # Punto de entrada principal de la aplicación
 └── requirements.txt          # Dependencias de Python
 ```
 
