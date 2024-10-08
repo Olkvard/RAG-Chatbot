@@ -9,8 +9,8 @@ import shutil
 
 #Aquí se especifica la dirección de la base de datos y de donde se extrae la información, además del tamaño de los chunks
 CHUNK_SIZE = 1000
-DATA_PATH = "Phisics"
-CHROMA_PATH = "PhisicsDB"
+DATA_PATH = "data"
+CHROMA_PATH = "dataDB"
 
 def load_documents(documents, data_path):
     """Esta función carga todos los documentos presentes en el DATA_PATH.
