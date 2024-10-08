@@ -77,14 +77,14 @@ Una vez que el sistema esté funcionando, puedes:
 
 ## Tecnologías Utilizadas
 
-LangChain: Orquesta la pipeline de RAG.
-Mistral 7B: Modelo de lenguaje open-source optimizado para este proyecto.
-Chroma: Base de datos vectorial para una recuperación eficiente de documentos.
-Gradio: Interfaz para la interacción con el sistema.
-Ollama: Facilita la ejecución del modelo de lenguaje de forma local
+- LangChain: Orquesta la pipeline de RAG.
+- Mistral 7B: Modelo de lenguaje open-source optimizado para este proyecto.
+- Chroma: Base de datos vectorial para una recuperación eficiente de documentos.
+- Gradio: Interfaz para la interacción con el sistema.
+- Ollama: Facilita la ejecución del modelo de lenguaje de forma local
 
 ## Futuras Mejoras
 
-Soporte Multimodal: El sistema podría expandirse para procesar imágenes o audio además de texto.
-Mejora de la Precisión: A medida que los modelos open-source mejoren, se podrán integrar modelos más pequeños con mejor precisión en el sistema.
+- Soporte Multimodal: El sistema podría expandirse para procesar imágenes o audio además de texto.
+- Mejora de la Precisión: A medida que los modelos open-source mejoren, se podrán integrar modelos más pequeños con mejor precisión en el sistema.
 
