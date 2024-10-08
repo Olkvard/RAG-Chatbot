@@ -1,6 +1,7 @@
 langchain
-os
-shutil
+langchain_community
+langchain_core
+langchain_experimental
 chromadb
 gradio
 Ollama
