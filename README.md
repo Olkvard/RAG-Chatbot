@@ -8,6 +8,7 @@ Las principales tecnologías usadas en este proyecto incluyen:
 - **Mistral 7B**, un modelo de lenguaje open-source optimizado a través de cuantización.
 - **Chroma** como base de datos vectorial para almacenar y gestionar los embeddings de los documentos.
 - **Gradio** para crear una interfaz intuitiva y fácil de usar para la interacción con el usuario.
+- **Ollama** para ejecutar el modelo de lenguaje de forma sencilla.
 
 ## Características
 - **Recuperación Eficiente de Documentos**: Utiliza recuperación basada en vectores para obtener documentos de alta precisión.
@@ -20,6 +21,7 @@ Las principales tecnologías usadas en este proyecto incluyen:
 ### Requisitos Previos
 Asegúrate de tener instalados los siguientes elementos en tu sistema:
 - Python 3.8+
+- Ollama
 - Entorno virtual (recomendado)
 
 ### Guía Paso a Paso
@@ -41,33 +43,36 @@ Asegúrate de tener instalados los siguientes elementos en tu sistema:
     pip install -r requirements.txt
     ```
 
-4. Descargar los pesos del modelo preentrenado:
-    Descarga el modelo **Mistral 7B** y coloca los pesos en el directorio `models/`.
+4. Descargar el modelo preentrenado:
+    Descarga el modelo **mistral:instruct** .
+   
+6. Crear la base de datos:
+    Mete todos los archivos que quieras dentro de la carpeta `/data` y ejecuta
+   ```bash
+   python database.py
+   ```
 
-5. Ejecutar el sistema de forma local:
+7. Ejecutar el sistema de forma local:
     ```bash
-    python app.py
+    python main.py
     ```
-
-6. Acceder a la interfaz Gradio:
+    
+8. Acceder a la interfaz Gradio:
    El sistema se iniciará localmente y podrás acceder a la interfaz Gradio en tu navegador en `http://localhost:7860/`.
 
 ## Uso
 
 Una vez que el sistema esté funcionando, puedes:
-- Subir un conjunto de documentos en formato PDF o texto.
 - Hacer preguntas al sistema relacionadas con el contenido de los documentos.
 - El sistema recuperará los documentos relevantes y generará una respuesta detallada.
 
 ## Estructura del Proyecto
 ```bash
-├── app.py                    # Punto de entrada principal de la aplicación
-├── models/                   # Directorio para almacenar los pesos del modelo
+├── main.py                   # Punto de entrada principal de la aplicación
 ├── data/                     # Directorio para almacenar los documentos subidos
-├── embeddings/               # Directorio para almacenar los embeddings en Chroma
+├── dataDB/                   # Directorio para almacenar los embeddings en Chroma
 ├── README.md                 # Introducción al proyecto
-├── requirements.txt          # Dependencias de Python
-└── src/                      # Código fuente para la implementación de RAG
+└── requirements.txt          # Dependencias de Python
 ```
 
 ## Tecnologías Utilizadas
@@ -76,6 +81,7 @@ LangChain: Orquesta la pipeline de RAG.
 Mistral 7B: Modelo de lenguaje open-source optimizado para este proyecto.
 Chroma: Base de datos vectorial para una recuperación eficiente de documentos.
 Gradio: Interfaz para la interacción con el sistema.
+Ollama: Facilita la ejecución del modelo de lenguaje de forma local
 
 ## Futuras Mejoras
 
