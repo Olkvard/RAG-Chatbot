@@ -43,21 +43,43 @@ Asegúrate de tener instalados los siguientes elementos en tu sistema:
     pip install -r requirements.txt
     ```
 
-4. Descargar el modelo preentrenado:
+4. Descargar el modelo preentrenado:         
     Descarga el modelo **mistral:instruct** y el modelo **nomic-embed-text** desde la interfaz de Ollama
    
-6. Crear la base de datos:
-    Mete todos los archivos que quieras dentro de la carpeta `/data` y ejecuta
-   ```bash
-   python database.py
-   ```
+5. Crear la base de datos:
+           
+   Para preparar el código para un proyecto nuevo el primer paso es decidir qué información se usará en el proyecto, este paso es crucial pues si no se seleccionan los más relevantes puede haber perdidas de precisión en las respuestas generadas. 
 
-7. Ejecutar el sistema de forma local:
+   Lo más recomendable sería buscar diferentes temas dentro de la base de datos, por ejemplo: Diseño, Requisitos, Tests, ... Y dividir los documentos según en que categoría caen. 
+
+   Una vez obtenidos los documentos deben colocarse en carpetas divididas según el tema elegido y MUY IMPORTANTE que no tengan subcarpetas. 
+
+   Cuando se ha completado este paso ya puede empezar el proceso de ajuste del código.
+
+   El archivo database.py se encarga de la creación de las bases de datos que utilizará el LLM para responder a las preguntas, tan solo hay que cambiar dos líneas de código.
+
+   ```bash
+   DATA_PATH = "data"
+   CHROMA_PATH = "dataDB"
+   ```
+   En la variable DATA_PATH se debe escribir la ruta de la carpeta donde se encuentran los documentos, y en la variable CHROMA_PATH la ruta de la base de datos que se va a crear. 
+
+   Una vez realizados los cambios se ejecuta el programa, con `python database.py`, y se creará la carpeta con la base de datos, este proceso se debe repetir con todas las categorías seleccionadas anteriormente. 
+
+7. Ajustar el código del main.py:                                                  
+   Tras la creación de las bases de datos se deben actualizar los accesos que realiza el LLM. Para ello el primer paso es modificar las variables globales que indican la dirección de las bases de datos. 
+
+    Interfaz de usuario gráfica, Texto
+
+    Descripción generada automáticamente 
+
+
+    En estas líneas se debe crear una variable global por cada base de datos creada y asignarle la ruta de dicha base de datos, lo recomendable es seleccionar cada una de estas y hacer click derecho, luego seleccionar la opción de cambiar todas las ocurrencias de esta forma te aseguras de que no haya problemas más adelante. Tal y como se muestra en la Figura 3. 
     ```bash
     python main.py
     ```
     
-8. Acceder a la interfaz Gradio:
+8. Acceder a la interfaz Gradio:              
    El sistema se iniciará localmente y podrás acceder a la interfaz Gradio en tu navegador en `http://localhost:7860/`.
 
 ## Uso
@@ -77,14 +99,14 @@ Una vez que el sistema esté funcionando, puedes:
 
 ## Tecnologías Utilizadas
 
-- LangChain: Orquesta la pipeline de RAG.
-- Mistral 7B: Modelo de lenguaje open-source optimizado para este proyecto.
-- Chroma: Base de datos vectorial para una recuperación eficiente de documentos.
-- Gradio: Interfaz para la interacción con el sistema.
-- Ollama: Facilita la ejecución del modelo de lenguaje de forma local
+LangChain: Orquesta la pipeline de RAG.                
+Mistral 7B: Modelo de lenguaje open-source optimizado para este proyecto.                   
+Chroma: Base de datos vectorial para una recuperación eficiente de documentos.                 
+Gradio: Interfaz para la interacción con el sistema.                   
+Ollama: Facilita la ejecución del modelo de lenguaje de forma local.              
 
 ## Futuras Mejoras
 
-- Soporte Multimodal: El sistema podría expandirse para procesar imágenes o audio además de texto.
-- Mejora de la Precisión: A medida que los modelos open-source mejoren, se podrán integrar modelos más pequeños con mejor precisión en el sistema.
+Soporte Multimodal: El sistema podría expandirse para procesar imágenes o audio además de texto.        
+Mejora de la Precisión: A medida que los modelos open-source mejoren, se podrán integrar modelos más pequeños con mejor precisión en el sistema.      
 
