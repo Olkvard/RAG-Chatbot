@@ -44,7 +44,7 @@ Asegúrate de tener instalados los siguientes elementos en tu sistema:
     ```
 
 4. Descargar el modelo preentrenado:
-    Descarga el modelo **mistral:instruct** .
+    Descarga el modelo **mistral:instruct** y el modelo **nomic-embed-text** desde la interfaz de Ollama
    
 6. Crear la base de datos:
     Mete todos los archivos que quieras dentro de la carpeta `/data` y ejecuta
